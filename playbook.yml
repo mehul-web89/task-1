@@ -1,0 +1,13 @@
+---
+- name: Creating a playbook with roles
+  hosts: all
+  become: yes
+  gather_facts: no
+  vars_prompt:
+    - name: "Linux_user_pass"
+      prompt: "Enter password"
+      unsafe: yes
+      private: yes
+      confirm: yes
+  roles:
+      role: mehul-web89.tasks.task-1

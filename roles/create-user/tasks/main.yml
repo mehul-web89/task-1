@@ -1,0 +1,35 @@
+---
+# tasks file for ./roles/create-user
+
+- name: Check if user exists
+  stat:
+    path: /home/Linux
+  register: user_stat
+- name: Creating user only if user not exists
+  block:
+    - name: Create user
+      user:
+        name: Linux
+        state: present
+        create_home: true
+        password: '{{Linux_user_pass}}'
+    - name: Creating a file userinfo.
+      blockinfile:
+        path: /tmp/user-info
+        create: 'yes'
+        block: |
+          user-name: linux
+          password: {{Linux_user_pass}}
+    - name: Fetching files to Ansible-controller.
+      fetch:
+        src: /tmp/user-info
+        dest: '/tmp/user-info-{{ inventory_hostname }}'
+        flat: 'yes'
+    - name: Deleting files from remote-hosts.
+      file: path=/tmp/user-info state=absent
+  when: not user_stat.stat.exists
+  rescue:
+    - name: Prints if errors
+      debug: >-
+        msg="Caught an error with {{ansible_failed_task.name}} in
+        {{inventory_hostname}}"
