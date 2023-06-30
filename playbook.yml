@@ -1,4 +1,5 @@
 ---
+
 - name: Creating a playbook with roles
   hosts: all
   become: yes
@@ -10,4 +11,4 @@
       private: yes
       confirm: yes
   roles:
-      role: mehul-web89.tasks.task-1
+    - role: task-1
